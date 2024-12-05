@@ -2,6 +2,8 @@ package com.ann.simpleDb;
 
 import org.junit.jupiter.api.*;
 
+import java.util.stream.IntStream;
+
 // method 실행 순서 지정 : SimpleDbTest class의 모든 test method가 이름의 알파벳 순서대로 실행
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class SimpleDbTest {
@@ -13,6 +15,12 @@ public class SimpleDbTest {
         simpleDb = new SimpleDb("localhost", "root", "lldj123414", "simpleDb_test");
 
         createArticleTable();
+    }
+
+    @BeforeEach
+    public void beforeEach() {
+        truncateArticleTable();
+        makeArticleTestData();
     }
 
     private static void createArticleTable() {
@@ -29,6 +37,27 @@ public class SimpleDbTest {
                     isBlind BIT(1) NOT NULL DEFAULT 0
                 )
                 """);
+    }
+
+    private void truncateArticleTable() {
+        simpleDb.run("TRUNCATE article");
+    }
+
+    private void makeArticleTestData() {
+        IntStream.rangeClosed(1, 6).forEach(no -> {
+            boolean isBlind = no > 3;
+            String title = "제목%d".formatted(no);
+            String body = "내용%d".formatted(no);
+
+            simpleDb.run("""
+                    INSERT INTO article
+                    SET createdDate = NOW(),
+                    modifiedDate = NOW(),
+                    title = ?,
+                    `body` = ?,
+                    isBlind = ?
+                    """, title, body, isBlind);
+        });
     }
 
     @Test
