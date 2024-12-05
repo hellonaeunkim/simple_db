@@ -56,4 +56,9 @@ public class SimpleDb {
             throw new RuntimeException("Failed to close database connection: " + e.getMessage(), e);
         }
     }
+
+    // 캡슐화를 통해 append method를 method chain 구조로 활용해 가독성 및 안정성 향상
+    public Sql genSql() {
+        return new Sql();
+    }
 }
