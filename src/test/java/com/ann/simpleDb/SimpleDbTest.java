@@ -254,8 +254,8 @@ public class SimpleDbTest {
         WHERE id = 1
         */
         sql.append("SELECT isBlind")
-                .append("FROM article")
-                .append("WHERE id = 1");
+            .append("FROM article")
+            .append("WHERE id = 1");
 
         Boolean isBlind = sql.selectBoolean();
 
@@ -275,6 +275,21 @@ public class SimpleDbTest {
         Boolean isBlind = sql.selectBoolean();
 
         assertThat(isBlind).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("selectBoolean, 3rd")
+    public void t011() {
+        Sql sql = simpleDb.genSql();
+        /*
+        == rawSql ==
+        SELECT 1 = 0
+        */
+        sql.append("SELECT 1 = 0");
+
+        Boolean isBlind = sql.selectBoolean();
+
+        assertThat(isBlind).isEqualTo(false);
     }
 
 }

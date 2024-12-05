@@ -59,6 +59,16 @@ public class SimpleDb {
 
     // 캡슐화를 통해 append method를 method chain 구조로 활용해 가독성 및 안정성 향상
     public Sql genSql() {
-        return new Sql();
+        return new Sql(this);
+    }
+
+    public boolean selectBoolean(String sql) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getBoolean(1);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to execute SQL: " + sql + ". Error: " + e.getMessage(), e);
+        }
     }
 }
