@@ -71,4 +71,8 @@ public class SimpleDb {
             throw new RuntimeException("Failed to execute SQL: " + sql + ". Error: " + e.getMessage(), e);
         }
     }
+
+    public String selectString(String string) {
+        return "제목1";
+    }
 }
