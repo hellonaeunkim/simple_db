@@ -25,25 +25,6 @@ public class SimpleDb {
         }
     }
 
-    // SQL 실행 method
-    public void run(String sql, Object... params) {
-        connect(); // 연결 초기화
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            bindParameters(preparedStatement, params); // 파라미터 바인딩 로직 분리
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to execute SQL: " + sql + ". Error: " + e.getMessage(), e);
-        }
-    }
-
-    // PreparedStatement 파라미터 바인딩 분리
-    private void bindParameters(PreparedStatement preparedStatement, Object... params) throws SQLException {
-        for (int i = 0; i < params.length; i++) {
-            preparedStatement.setObject(i + 1, params[i]);
-        }
-    }
-
     // 자원 해제
     public void close() {
         if (connection == null) {
@@ -62,14 +43,33 @@ public class SimpleDb {
         return new Sql(this);
     }
 
-    public boolean selectBoolean(String sql) {
+    // PreparedStatement 파라미터 바인딩 분리
+    private void bindParameters(PreparedStatement preparedStatement, Object... params) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            preparedStatement.setObject(i + 1, params[i]);
+        }
+    }
+    // SQL 실행 메서드
+    private Object _run(String sql, Object... params) {
+        connect();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean(1);
+            bindParameters(preparedStatement, params);
+            if (sql.startsWith("SELECT")) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                return resultSet.getBoolean(1);
+            }
+            return preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to execute SQL: " + sql + ". Error: " + e.getMessage(), e);
         }
+    }
+
+    public int run(String sql, Object... params) {
+        return (int) _run(sql, params);
+    }
+    public boolean selectBoolean(String sql) {
+        return (boolean) _run(sql);
     }
 
     public String selectString(String string) {
