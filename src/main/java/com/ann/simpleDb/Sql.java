@@ -89,7 +89,7 @@ public class Sql {
     }
 
     public String selectString() {
-        return simpleDb.selectString(sqlFormat.toString());
+        return simpleDb.selectString(sqlFormat.toString().trim());
     }
 
     public boolean selectBoolean() {
