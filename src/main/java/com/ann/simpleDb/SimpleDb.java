@@ -63,6 +63,8 @@ public class SimpleDb {
                     return (T) resultSet.getString(1);
                 } else if (cls == Boolean.class) {
                     return (T) (Boolean) resultSet.getBoolean(1); // 첫 번째 컬럼 값을 반환
+                } else if (cls == Long.class) {
+                    return (T) (Long) resultSet.getLong(1);
                 }
             }
             // INSERT, UPDATE, DELETE 쿼리는 실행 후 영향을 받은 행 수 반환
@@ -85,5 +87,9 @@ public class SimpleDb {
     // SELECT 쿼리 실행 메서드 - String 값 반환
     public String selectString(String sql) {
         return _run(sql, String.class);
+    }
+
+    public long selectLong(String sql) {
+        return _run(sql, Long.class);
     }
 }
