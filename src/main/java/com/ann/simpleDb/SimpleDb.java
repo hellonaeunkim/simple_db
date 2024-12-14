@@ -50,7 +50,7 @@ public class SimpleDb {
         }
     }
     // SQL 실행 메서드
-    private Object _run(String sql, Class<?> cls, Object... params) {
+    private <T> T _run(String sql, Class<?> cls, Object... params) {
         connect(); // 데이터베이스 연결 초기화
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             bindParameters(preparedStatement, params); // 파라미터 바인딩
@@ -60,13 +60,13 @@ public class SimpleDb {
                 resultSet.next(); // 첫 번째 결과로 이동
 
                 if (cls == String.class) {
-                    return resultSet.getString(1);
+                    return (T) resultSet.getString(1);
                 } else if (cls == Boolean.class) {
-                    return resultSet.getBoolean(1); // 첫 번째 컬럼 값을 반환
+                    return (T) (Boolean) resultSet.getBoolean(1); // 첫 번째 컬럼 값을 반환
                 }
             }
             // INSERT, UPDATE, DELETE 쿼리는 실행 후 영향을 받은 행 수 반환
-            return preparedStatement.executeUpdate();
+            return (T) (Integer) preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Failed to execute SQL: " + sql + ". Error: " + e.getMessage(), e);
         }
@@ -74,16 +74,16 @@ public class SimpleDb {
 
     // SQL 실행 메서드 (INSERT, UPDATE, DELETE) - 영향을 받은 행 수 반환
     public int run(String sql, Object... params) {
-        return (int) _run(sql, Integer.class, params);
+        return _run(sql, Integer.class, params);
     }
 
     // SELECT 쿼리 실행 메서드 - Boolean 값 반환
     public boolean selectBoolean(String sql) {
-        return (boolean) _run(sql, Boolean.class);
+        return _run(sql, Boolean.class);
     }
 
     // SELECT 쿼리 실행 메서드 - String 값 반환
     public String selectString(String sql) {
-        return (String) _run(sql, String.class);
+        return _run(sql, String.class);
     }
 }
