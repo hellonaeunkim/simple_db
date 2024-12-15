@@ -81,7 +81,7 @@ public class Sql {
     }
 
     public LocalDateTime selectDatetime() {
-        return LocalDateTime.now();
+        return simpleDb.selectDatetime(sqlFormat.toString().trim());
     }
 
     public long selectLong() {

@@ -3,6 +3,7 @@ package com.ann.simpleDb;
 import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 
 // final field의 생성자 자동으로 생성
 @RequiredArgsConstructor
@@ -65,6 +66,8 @@ public class SimpleDb {
                     return (T) (Boolean) resultSet.getBoolean(1); // 첫 번째 컬럼 값을 반환
                 } else if (cls == Long.class) {
                     return (T) (Long) resultSet.getLong(1);
+                } else if (cls == LocalDateTime.class) {
+                    return (T) resultSet.getTimestamp(1).toLocalDateTime();
                 }
             }
             // INSERT, UPDATE, DELETE 쿼리는 실행 후 영향을 받은 행 수 반환
@@ -91,5 +94,9 @@ public class SimpleDb {
 
     public long selectLong(String sql) {
         return _run(sql, Long.class);
+    }
+
+    public LocalDateTime selectDatetime(String sql) {
+        return _run(sql, LocalDateTime.class);
     }
 }
