@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 // final field의 생성자 자동으로 생성
 @RequiredArgsConstructor
@@ -68,6 +70,15 @@ public class SimpleDb {
                     return (T) (Long) resultSet.getLong(1);
                 } else if (cls == LocalDateTime.class) {
                     return (T) resultSet.getTimestamp(1).toLocalDateTime();
+                } else if (cls == Map.class) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("id", resultSet.getLong("id"));
+                    row.put("createdDate", resultSet.getTimestamp("createdDate").toLocalDateTime());
+                    row.put("modifiedDate", resultSet.getTimestamp("modifiedDate").toLocalDateTime());
+                    row.put("title", resultSet.getString("title"));
+                    row.put("body", resultSet.getString("body"));
+                    row.put("isBlind", resultSet.getBoolean("isBlind"));
+                    return (T) row;
                 }
             }
             // INSERT, UPDATE, DELETE 쿼리는 실행 후 영향을 받은 행 수 반환
@@ -98,5 +109,9 @@ public class SimpleDb {
 
     public LocalDateTime selectDatetime(String sql) {
         return _run(sql, LocalDateTime.class);
+    }
+
+    public Map<String, Object> selectRow(String sql) {
+        return _run(sql, Map.class);
     }
 }

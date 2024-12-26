@@ -70,14 +70,7 @@ public class Sql {
     }
 
     public Map<String, Object> selectRow() {
-        return Map.of(
-                "id", 1L,
-                "createdDate", LocalDateTime.now(),
-                "modifiedDate", LocalDateTime.now(),
-                "title", "제목1",
-                "body", "내용1",
-                "isBlind", false
-        );
+        return simpleDb.selectRow(sqlFormat.toString().trim());
     }
 
     public LocalDateTime selectDatetime() {
